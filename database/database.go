@@ -79,7 +79,7 @@ func newDB(ctx context.Context, log *logrus.Entry, client *mongo.Client, domain,
 	}
 }
 
-// Health returns some health information about the promoter.
+// Close gracefully shuts down the DB.
 func (db *DB) Close() error {
 	return db.staticDB.Client().Disconnect(context.Background())
 }
