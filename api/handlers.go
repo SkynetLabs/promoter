@@ -20,5 +20,6 @@ func (api *API) healthGET(w http.ResponseWriter, req *http.Request, _ httprouter
 // the user's balance. The txn id ensures the idempotency of the operation.
 func (api *API) paymentPOST(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 	// TODO Implement
+	// TODO Make sure the amount is > 0
 	api.WriteError(w, errors.New("TODO: IMPLEMENT"), http.StatusInternalServerError)
 }

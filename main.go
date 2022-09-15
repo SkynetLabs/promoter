@@ -32,9 +32,6 @@ type (
 )
 
 const (
-	// dbName is the name of the database to use for Promoter.
-	dbName = "promoter"
-
 	// envAPIShutdownTimeout is the timeout for gracefully shutting down the
 	// API before killing it.
 	envAPIShutdownTimeout = 20 * time.Second
@@ -131,7 +128,7 @@ func main() {
 	dbLogger := logger.WithField("modules", "db")
 
 	// Create the promoter that talks to skyd and the database.
-	db, err := database.New(ctx, dbLogger, cfg.DBURI, cfg.DBUser, cfg.DBPassword, cfg.ServerDomain, dbName)
+	db, err := database.New(ctx, dbLogger, cfg.DBURI, cfg.DBUser, cfg.DBPassword, cfg.ServerDomain, database.DBName)
 	if err != nil {
 		logger.WithError(err).Fatal("Failed to connect to database")
 	}
