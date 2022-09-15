@@ -14,7 +14,6 @@ import (
 // databases and are iterating over the schema at the same time.
 func schema() map[string][]mongo.IndexModel {
 	return map[string][]mongo.IndexModel{
-		collUsers: {},
 		collSubscriptions: {
 			{
 				Keys:    bson.D{{"sub", 1}},

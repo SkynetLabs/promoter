@@ -3,7 +3,7 @@ package api
 import (
 	"bytes"
 	"context"
-	"io/ioutil"
+	"io"
 	"math"
 	"net/http"
 	"sync"
@@ -75,15 +75,16 @@ func (msc *MockSessionContext) CommitTransaction(context.Context) error {
 // TestMongoWriter ensures that MongoWrites functions as expected.
 func TestMongoWriter(t *testing.T) {
 	ctx := context.Background()
-	testLogger := logrus.Logger{}
-	testLogger.SetOutput(ioutil.Discard)
+	logger := logrus.New()
+	logger.SetOutput(io.Discard)
+	testLogger := logger.WithField("module", "test")
 
 	/* Happy path */
 
 	testRW := &bufferResponseWriter{}
 	testSC := NewMockSessionContext(ctx)
 	// Create a new MongoWriter and open a new transaction with the given session.
-	mw, err := NewMongoWriter(testRW, testSC, &testLogger)
+	mw, err := NewMongoWriter(testRW, testSC, testLogger)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -119,7 +120,7 @@ func TestMongoWriter(t *testing.T) {
 	testSC = NewMockSessionContext(ctx)
 	// Create a new MongoWriter and open a new transaction with the given session.
 	// Expect testSc to contain a started transaction.
-	mw, err = NewMongoWriter(testRW, testSC, &testLogger)
+	mw, err = NewMongoWriter(testRW, testSC, testLogger)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -163,7 +164,7 @@ func TestMongoWriter(t *testing.T) {
 	testSC = NewMockSessionContext(ctx)
 	// Create a new MongoWriter and open a new transaction with the given session.
 	// Expect testSc to contain a started transaction.
-	mw, err = NewMongoWriter(testRW, testSC, &testLogger)
+	mw, err = NewMongoWriter(testRW, testSC, testLogger)
 	if err != nil {
 		t.Fatal(err)
 	}

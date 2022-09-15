@@ -199,3 +199,9 @@ func (api *API) WriteJSON(w http.ResponseWriter, obj interface{}) {
 		api.staticLogger.WithError(err).Error("Failed to encode response object")
 	}
 }
+
+// WriteSuccess responds with a success code and no content.
+func (api *API) WriteSuccess(w http.ResponseWriter) {
+	api.staticLogger.Debug("WriteSuccess")
+	w.WriteHeader(http.StatusNoContent)
+}

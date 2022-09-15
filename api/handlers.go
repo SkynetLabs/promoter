@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -19,7 +20,20 @@ func (api *API) healthGET(w http.ResponseWriter, req *http.Request, _ httprouter
 // user's sub, and an amount. The amount is in credits that are to be added to
 // the user's balance. The txn id ensures the idempotency of the operation.
 func (api *API) paymentPOST(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-	// TODO Implement
-	// TODO Make sure the amount is > 0
-	api.WriteError(w, errors.New("TODO: IMPLEMENT"), http.StatusInternalServerError)
+	var payment PaymentPOST
+	err := json.NewDecoder(req.Body).Decode(&payment)
+	if err != nil {
+		api.WriteError(w, errors.AddContext(err, "failed to parse body"), http.StatusBadRequest)
+		return
+	}
+	if err = payment.Validate(); err != nil {
+		api.WriteError(w, err, http.StatusBadRequest)
+		return
+	}
+	err = api.staticDB.CreditUser(req.Context(), payment.Sub, payment.Credits, payment.TxnID)
+	if err != nil {
+		api.WriteError(w, err, http.StatusInternalServerError)
+		return
+	}
+	api.WriteSuccess(w)
 }
